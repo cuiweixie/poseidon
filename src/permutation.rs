@@ -1,7 +1,7 @@
 use crate::spec::{Spec, State};
-use halo2_proofs::arithmetic::FieldExt;
+use ff::PrimeField;
 
-impl<F: FieldExt, const T: usize, const RATE: usize> Spec<F, T, RATE> {
+impl<F: PrimeField, const T: usize, const RATE: usize> Spec<F, T, RATE> {
     /// Applies the Poseidon permutation to the given state
     pub fn permute(&self, state: &mut State<F, T>) {
         let r_f = self.r_f / 2;
@@ -50,14 +50,12 @@ impl<F: FieldExt, const T: usize, const RATE: usize> Spec<F, T, RATE> {
 mod tests {
     use super::State;
     use crate::spec::{tests::SpecRef, Spec};
-    use halo2_proofs::pairing::bn256::Fr;
-    use halo2_proofs::pairing::group::ff::PrimeField;
-
-    use halo2_proofs::arithmetic::FieldExt;
+    //use halo2_proofs::pairing::bn256::Fr;
+    use ff::PrimeField;
 
     /// We want to keep unoptimized poseidion construction and permutation to
     /// cross test with optimized one
-    impl<F: FieldExt, const T: usize, const RATE: usize> SpecRef<F, T, RATE> {
+    impl<F: PrimeField, const T: usize, const RATE: usize> SpecRef<F, T, RATE> {
         fn permute(&self, state: &mut State<F, T>) {
             let (r_f, r_p) = (self.r_f / 2, self.r_p);
 
@@ -83,7 +81,6 @@ mod tests {
 
     #[test]
     fn cross_test() {
-        use halo2_proofs::pairing::group::ff::Field;
         use rand_core::OsRng;
         use std::time::Instant;
 

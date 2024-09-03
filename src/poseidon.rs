@@ -1,13 +1,13 @@
 use crate::{Spec, State};
 use halo2_proofs::arithmetic::FieldExt;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Poseidon hasher that maintains state and inputs and yields single element
 /// output when desired
 #[derive(Debug, Clone)]
 pub struct Poseidon<F: FieldExt, const T: usize, const RATE: usize> {
     state: State<F, T>,
-    spec: Rc<Spec<F, T, RATE>>,
+    spec: Arc<Spec<F, T, RATE>>,
     absorbing: Vec<F>,
 }
 
@@ -15,7 +15,7 @@ impl<F: FieldExt, const T: usize, const RATE: usize> Poseidon<F, T, RATE> {
     /// Constructs a clear state poseidon instance
     pub fn new(r_f: usize, r_p: usize) -> Self {
         Self {
-            spec: Rc::new(Spec::new(r_f, r_p)),
+            spec: Arc::new(Spec::new(r_f, r_p)),
             state: State::default(),
             absorbing: Vec::new(),
         }
@@ -28,7 +28,7 @@ impl<F: FieldExt, const T: usize, const RATE: usize> Poseidon<F, T, RATE> {
     }
 
     /// return share spec
-    pub fn get_spec(&self) -> Rc<Spec<F, T, RATE>> {
+    pub fn get_spec(&self) -> Arc<Spec<F, T, RATE>> {
         self.spec.clone()
     }
 

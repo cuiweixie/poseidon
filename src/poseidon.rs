@@ -96,8 +96,8 @@ impl<F: FromUniformBytes<64>, const T: usize, const RATE: usize> Poseidon<F, T, 
 
 #[test]
 fn test_padding() {
-    use halo2_proofs::pairing::bn256::Fr;
-    use halo2_proofs::pairing::group::ff::Field;
+    use ff::Field;
+    use halo2curves::bn256::Fr;
 
     const R_F: usize = 8;
     const R_P: usize = 57;

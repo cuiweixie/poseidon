@@ -9,5 +9,10 @@ license = "MIT OR Apache-2.0"
 subtle = { version = "2.3", default-features = false }
 ff = { version = "0.13", features = ["derive"] }
 
+
+[dev-dependencies]
+rand_core = { version = "0.6", default-features = false }
+halo2curves = "0.5.0"
+
 [features]
 default = []

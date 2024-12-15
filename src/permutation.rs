@@ -50,8 +50,9 @@ impl<F: PrimeField, const T: usize, const RATE: usize> Spec<F, T, RATE> {
 mod tests {
     use super::State;
     use crate::spec::{tests::SpecRef, Spec};
-    //use halo2_proofs::pairing::bn256::Fr;
+    use ff::Field;
     use ff::PrimeField;
+    use halo2curves::bn256::Fr;
 
     /// We want to keep unoptimized poseidion construction and permutation to
     /// cross test with optimized one
@@ -96,7 +97,7 @@ mod tests {
                         const RATE: usize = $RATE;
                         let mut state = State(
                             (0..T)
-                                .map(|_| Fr::random(OsRng))
+                                .map(|_| Field::random(OsRng))
                                 .collect::<Vec<Fr>>()
                                 .try_into().unwrap(),
                         );

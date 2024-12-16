@@ -4,17 +4,34 @@
 //! actual permutation process.
 
 use ff::PrimeField;
+use serde::{Serialize, Serializer};
 
 #[derive(PartialEq, Debug, Clone)]
-pub(crate) struct Matrix<F: PrimeField, const T: usize>(pub(crate) [[F; T]; T]);
+pub(crate) struct Matrix<F: PrimeField + Serialize, const T: usize>(
+    pub(crate) [[F; T]; T]
+);
 
-impl<F: PrimeField, const T: usize> Default for Matrix<F, T> {
+impl<F: PrimeField + Serialize, const T: usize> Serialize for Matrix<F, T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // 将 [[F; T]; T] 转换为 Vec<Vec<F>>
+        let vec_of_vecs: Vec<Vec<F>> = self.0
+            .iter()
+            .map(|row| row.to_vec())
+            .collect();
+        vec_of_vecs.serialize(serializer)
+    }
+}
+
+impl<F: PrimeField + Serialize, const T: usize> Default for Matrix<F, T> {
     fn default() -> Self {
         Matrix([[F::ZERO; T]; T])
     }
 }
 
-impl<F: PrimeField, const T: usize> Matrix<F, T> {
+impl<F: PrimeField + Serialize, const T: usize> Matrix<F, T> {
     #[inline]
     pub(crate) fn zero_matrix() -> Self {
         Self([[F::ZERO; T]; T])

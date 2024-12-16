@@ -3,6 +3,7 @@ use crate::spec::MDSMatrix;
 use ff::Field;
 use ff::FromUniformBytes;
 use std::marker::PhantomData;
+use serde::Serialize;
 
 /// Grain initializes round constants and MDS matrix at given sponge parameters
 pub(super) struct Grain<F: Field, const T: usize, const RATE: usize> {
@@ -10,7 +11,7 @@ pub(super) struct Grain<F: Field, const T: usize, const RATE: usize> {
     _field: PhantomData<F>,
 }
 
-impl<F: FromUniformBytes<64>, const T: usize, const RATE: usize> Grain<F, T, RATE> {
+impl<F: FromUniformBytes<64> + Serialize, const T: usize, const RATE: usize> Grain<F, T, RATE> {
     pub(crate) fn generate(r_f: usize, r_p: usize) -> (Vec<[F; T]>, MDSMatrix<F, T, RATE>) {
         debug_assert!(T > 1 && T == RATE + 1);
 
@@ -144,7 +145,7 @@ impl<F: FromUniformBytes<64>, const T: usize, const RATE: usize> Grain<F, T, RAT
     }
 }
 
-impl<F: FromUniformBytes<64>, const T: usize, const RATE: usize> Iterator for Grain<F, T, RATE> {
+impl<F: FromUniformBytes<64> + Serialize, const T: usize, const RATE: usize> Iterator for Grain<F, T, RATE> {
     type Item = bool;
 
     fn next(&mut self) -> Option<Self::Item> {

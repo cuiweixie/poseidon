@@ -4,6 +4,7 @@ use crate::{grain::Grain, matrix::Matrix};
 
 use ff::FromUniformBytes;
 use ff::PrimeField;
+use serde::Serialize;
 
 /// `State` is structure `T` sized field elements that are subjected to
 /// permutation
@@ -67,14 +68,15 @@ impl<F: PrimeField, const T: usize> State<F, T> {
 /// permutation step. Constants are planned to be hardcoded once transcript
 /// design matures. Number of partial rounds can be deriven from number of
 /// constants.
-#[derive(Debug, Clone)]
-pub struct Spec<F: PrimeField, const T: usize, const RATE: usize> {
+// add serde_json to cargo.toml
+#[derive(Debug, Clone, Serialize)]
+pub struct Spec<F: PrimeField + Serialize, const T: usize, const RATE: usize> {
     pub(crate) r_f: usize,
     pub(crate) mds_matrices: MDSMatrices<F, T, RATE>,
     pub(crate) constants: OptimizedConstants<F, T>,
 }
 
-impl<F: PrimeField, const T: usize, const RATE: usize> Spec<F, T, RATE> {
+impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> Spec<F, T, RATE> {
     /// Number of full rounds
     pub fn r_f(&self) -> usize {
         self.r_f.clone()
@@ -92,14 +94,38 @@ impl<F: PrimeField, const T: usize, const RATE: usize> Spec<F, T, RATE> {
 /// `OptimizedConstants` has round constants that are added each round. While
 /// full rounds has T sized constants there is a single constant for each
 /// partial round
-#[derive(Debug, Clone)]
-pub struct OptimizedConstants<F: PrimeField, const T: usize> {
+#[derive(Debug, Clone, Serialize)]
+pub struct OptimizedConstants<F: PrimeField + Serialize, const T: usize> {
+    #[serde(with = "vec_array_serializer")]
     pub(crate) start: Vec<[F; T]>,
     pub(crate) partial: Vec<F>,
+    #[serde(with = "vec_array_serializer")]
     pub(crate) end: Vec<[F; T]>,
 }
 
-impl<F: PrimeField, const T: usize> OptimizedConstants<F, T> {
+// 在同一文件或模块中添加序列化助手
+mod vec_array_serializer {
+    use serde::{Serialize, Serializer};
+    use super::*;
+
+    pub fn serialize<S, F, const T: usize>(
+        data: &Vec<[F; T]>,
+        serializer: S,
+    ) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+        F: Serialize + PrimeField,
+    {
+        let vec_of_vecs: Vec<Vec<F>> = data
+            .iter()
+            .map(|arr| arr.to_vec())
+            .collect();
+        vec_of_vecs.serialize(serializer)
+    }
+}
+
+
+impl<F: PrimeField + Serialize, const T: usize> OptimizedConstants<F, T> {
     /// Returns rounds constants for first part of full rounds
     pub fn start(&self) -> &Vec<[F; T]> {
         &self.start
@@ -119,14 +145,14 @@ impl<F: PrimeField, const T: usize> OptimizedConstants<F, T> {
 /// `MDSMatrices` holds the MDS matrix as well as transition matrix which is
 /// also called `pre_sparse_mds` and sparse matrices that enables us to reduce
 /// number of multiplications in apply MDS step
-#[derive(Debug, Clone)]
-pub struct MDSMatrices<F: PrimeField, const T: usize, const RATE: usize> {
+#[derive(Debug, Clone, Serialize)]
+pub struct MDSMatrices<F: PrimeField + Serialize, const T: usize, const RATE: usize> {
     pub(crate) mds: MDSMatrix<F, T, RATE>,
     pub(crate) pre_sparse_mds: MDSMatrix<F, T, RATE>,
     pub(crate) sparse_matrices: Vec<SparseMDSMatrix<F, T, RATE>>,
 }
 
-impl<F: PrimeField, const T: usize, const RATE: usize> MDSMatrices<F, T, RATE> {
+impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> MDSMatrices<F, T, RATE> {
     /// Returns original MDS matrix
     pub fn mds(&self) -> &MDSMatrix<F, T, RATE> {
         &self.mds
@@ -144,10 +170,10 @@ impl<F: PrimeField, const T: usize, const RATE: usize> MDSMatrices<F, T, RATE> {
 }
 
 /// `MDSMatrix` is applied to `State` to achive linear layer of Poseidon
-#[derive(Clone, Debug)]
-pub struct MDSMatrix<F: PrimeField, const T: usize, const RATE: usize>(pub(crate) Matrix<F, T>);
+#[derive(Clone, Debug, Serialize)]
+pub struct MDSMatrix<F: PrimeField + Serialize, const T: usize, const RATE: usize>(pub(crate) Matrix<F, T>);
 
-impl<F: PrimeField, const T: usize, const RATE: usize> Index<usize> for MDSMatrix<F, T, RATE> {
+impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> Index<usize> for MDSMatrix<F, T, RATE> {
     type Output = [F; T];
 
     fn index(&self, idx: usize) -> &Self::Output {
@@ -155,7 +181,7 @@ impl<F: PrimeField, const T: usize, const RATE: usize> Index<usize> for MDSMatri
     }
 }
 
-impl<F: PrimeField, const T: usize, const RATE: usize> MDSMatrix<F, T, RATE> {
+impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> MDSMatrix<F, T, RATE> {
     /// Applies `MDSMatrix` to the state
     pub(crate) fn apply(&self, state: &mut State<F, T>) {
         state.0 = self.0.mul_vector(&state.0);
@@ -235,15 +261,19 @@ impl<F: PrimeField, const T: usize, const RATE: usize> MDSMatrix<F, T, RATE> {
     }
 }
 
+use serde_arrays;
+
 /// `SparseMDSMatrix` are in `[row], [hat | identity]` form and used in linear
 /// layer of partial rounds instead of the original MDS
-#[derive(Debug, Clone)]
-pub struct SparseMDSMatrix<F: PrimeField, const T: usize, const RATE: usize> {
+#[derive(Debug, Clone, Serialize)]
+pub struct SparseMDSMatrix<F: PrimeField + Serialize, const T: usize, const RATE: usize> {
+    #[serde(with = "serde_arrays")]
     pub(crate) row: [F; T],
+    #[serde(with = "serde_arrays")]
     pub(crate) col_hat: [F; RATE],
 }
 
-impl<F: PrimeField, const T: usize, const RATE: usize> SparseMDSMatrix<F, T, RATE> {
+impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> SparseMDSMatrix<F, T, RATE> {
     /// Returns the first row
     pub fn row(&self) -> &[F; T] {
         &self.row
@@ -274,7 +304,7 @@ impl<F: PrimeField, const T: usize, const RATE: usize> SparseMDSMatrix<F, T, RAT
     }
 }
 
-impl<F: PrimeField, const T: usize, const RATE: usize> From<MDSMatrix<F, T, RATE>>
+impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> From<MDSMatrix<F, T, RATE>>
     for SparseMDSMatrix<F, T, RATE>
 {
     /// Assert the form and represent an MDS matrix as a sparse MDS matrix
@@ -298,7 +328,7 @@ impl<F: PrimeField, const T: usize, const RATE: usize> From<MDSMatrix<F, T, RATE
     }
 }
 
-impl<F: FromUniformBytes<64>, const T: usize, const RATE: usize> Spec<F, T, RATE> {
+impl<F: FromUniformBytes<64> + Serialize, const T: usize, const RATE: usize> Spec<F, T, RATE> {
     /// Given number of round parameters constructs new Posedion instance
     /// calculating unoptimized round constants with reference `Grain` then
     /// calculates optimized constants and sparse matrices

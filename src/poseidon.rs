@@ -1,17 +1,27 @@
 use crate::{Spec, State};
 use ff::FromUniformBytes;
 use ff::PrimeField;
+use serde::Serialize;
 
 /// Poseidon hasher that maintains state and inputs and yields single element
 /// output when desired
 #[derive(Debug, Clone)]
-pub struct Poseidon<F: PrimeField, const T: usize, const RATE: usize> {
+pub struct Poseidon<F: PrimeField+ Serialize, const T: usize, const RATE: usize> {
     state: State<F, T>,
-    spec: Spec<F, T, RATE>,
+    /// The specification of the Poseidon hash function.
+    ///
+    /// Contains all the parameters needed for the Poseidon permutation:
+    /// - MDS matrix
+    /// - Round constants
+    /// - Number of full and partial rounds
+    /// - Other configuration parameters
+    ///
+    /// This specification is used to perform the actual hash computation.
+    pub spec: Spec<F, T, RATE>,
     absorbing: Vec<F>,
 }
 
-impl<F: FromUniformBytes<64>, const T: usize, const RATE: usize> Poseidon<F, T, RATE> {
+impl<F: FromUniformBytes<64> + Serialize, const T: usize, const RATE: usize> Poseidon<F, T, RATE> {
     /// Constructs a clear state poseidon instance
     pub fn new(r_f: usize, r_p: usize) -> Self {
         Self {

@@ -6,14 +6,13 @@ use halo2curves::bn256::Fr;
 fn main() {
     // Define the parameters for the Poseidon hasher
     let number_of_full_rounds = 8;
-    let number_of_half_rounds = 7;
-    let number_of_inputs_0 = 5;
-    let number_of_inputs_1 = 3;
+    let number_of_half_rounds = 56;
+    let number_of_inputs_0 = 17;
 
     // Initialize a mutable hasher with constant capacity parameters
     // and number of rounds arguments. This will also generate matrices
     // and constants according to the specification
-    let mut hasher = Poseidon::<Fr, 3, 2>::new(number_of_full_rounds, number_of_half_rounds);
+    let mut hasher = Poseidon::<Fr, 17, 16>::new(number_of_full_rounds, number_of_half_rounds);
 
     let json = serde_json::to_string_pretty(&hasher.clone().spec).unwrap();
     println!("Serialized JSON: {}", json);

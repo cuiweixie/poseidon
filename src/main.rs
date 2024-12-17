@@ -21,27 +21,15 @@ fn main() {
     use std::io::Write;
     file.write_all(json.as_bytes()).expect("Unable to write data");
     // In sake of the example we generate some dummy scalar inputs
-    let inputs =  (0..number_of_inputs_0)
+    let inputs = (0..number_of_inputs_0)
         .map(|_| Fr::one())
         .collect::<Vec<Fr>>();
 
     // Feed inputs to the Absorption line
-    let r = hasher.update_exact(&[Fr::one()]);
-    println!("r: {:?}", r);
+    hasher.update(&inputs[..]);
 
-    println!("state[0]: {:?}", hasher.get_state());
+    println!("state final: {:?}", hasher.get_state());
 
     // Yield your challenge with squeeze function
-    let challenge_alpha = hasher.squeeze();
-
-    // Then again ...
-    let inputs = (0..number_of_inputs_1)
-        .map(|_| Fr::one())
-        .collect::<Vec<Fr>>();
-    hasher.update(&inputs[..]);
-    let challenge_beta = hasher.squeeze();
-
-    // Print the challenges
-    println!("Challenge Alpha: {:?}", challenge_alpha);
-    println!("Challenge Beta: {:?}", challenge_beta);
+    // let challenge_alpha = hasher.squeeze();
 }

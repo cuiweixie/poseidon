@@ -25,13 +25,9 @@ impl<F: PrimeField, const T: usize> State<F, T> {
     /// Only supports `alpha = 5` sbox case.
     pub(crate) fn sbox_full(&mut self) {
         for e in self.0.iter_mut() {
-            println!("e: {:?}", e);
             let tmp = e.mul(*e);
-            println!("tmp: {:?}", tmp);
             e.mul_assign(tmp);
-            println!("e: {:?}", e);
             e.mul_assign(tmp);
-            println!("e: {:?}", e);
         }
     }
 

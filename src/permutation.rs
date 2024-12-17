@@ -40,6 +40,8 @@ impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> Spec<F, T, RA
             }
         }
 
+        println!("state after partial: {:?}", state);
+
         // Second half of the full rounds
         {
             for round_constants in self.constants.end.iter() {
@@ -47,9 +49,11 @@ impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> Spec<F, T, RA
                 state.add_constants(round_constants);
                 self.mds_matrices.mds.apply(state);
             }
+            println!("state 3 loop end: {:?}", state);
             state.sbox_full();
             self.mds_matrices.mds.apply(state);
         }
+        println!("state return from permute: {:?}", state);
     }
 }
 

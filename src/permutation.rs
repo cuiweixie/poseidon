@@ -9,6 +9,7 @@ impl<F: PrimeField + Serialize, const T: usize, const RATE: usize> Spec<F, T, RA
 
         // First half of the full rounds
         {
+            println!("state 0: {:?}", state);
             state.add_constants(&self.constants.start[0]);
             println!("state 1: {:?}", state);
             for round_constants in self.constants.start.iter().skip(1).take(r_f - 1) {

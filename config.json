@@ -1,19 +1,8 @@
 {
-  "unoptimized_constants": [
-    [
-      "0x2b745c46e648356309f6c3b54100db1f91f92a33518c0d170d5e7c85f9ef58f2",
-      "0x03bb5db670bfd0d54d57b4915f19ce50a031b542b0759d850ccb79caa90f4cb5"
-    ],
-    [
-      "0x1ecc0da2d60a1bb6bf317f39b47d1fd8a5d8729fb332400316e54f93100fe853",
-      "0x02e58510c454d3b23f2643b6e658ecba78cc30afacb681350e1a6a3f3afb6d54"
-    ],
-    [
-      "0x2f859cd6316e2feeb7baf0576337fa16765a64af8fb6f98a04946a8162005671",
-      "0x041b8d89ffb8b3ded9848f532e3b929342716b11832c44c70186fe8a89073e2a"
-    ]
-  ],
   "r_f": 2,
+  "r_p": 1,
+  "t": 2,
+  "rate": 1,
   "mds_matrices": {
     "mds": [
       [

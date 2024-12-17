@@ -7,7 +7,7 @@ fn main() {
     // Define the parameters for the Poseidon hasher
     let number_of_full_rounds = 2;
     let number_of_half_rounds = 1;
-    let number_of_inputs_0 = 1;
+    let number_of_inputs_0 = 2;
     let number_of_inputs_1 = 3;
 
     // Initialize a mutable hasher with constant capacity parameters
@@ -31,5 +31,7 @@ fn main() {
     println!("state final: {:?}", hasher.get_state());
 
     // Yield your challenge with squeeze function
-    // let challenge_alpha = hasher.squeeze();
+    let challenge_alpha = hasher.squeeze();
+
+    println!("challenge_alpha: {:?}", challenge_alpha);
 }

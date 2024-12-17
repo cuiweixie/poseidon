@@ -75,9 +75,10 @@ impl<F: PrimeField, const T: usize> State<F, T> {
 // add serde_json to cargo.toml
 #[derive(Debug, Clone, Serialize)]
 pub struct Spec<F: PrimeField + Serialize, const T: usize, const RATE: usize> {
-    #[serde(with = "vec_array_serializer")]
-    pub(crate) unoptimized_constants: Vec<[F; T]>,
     pub(crate) r_f: usize,
+    pub(crate) r_p: usize,
+    pub(crate) t: usize,
+    pub(crate) rate: usize,
     pub(crate) mds_matrices: MDSMatrices<F, T, RATE>,
     pub(crate) constants: OptimizedConstants<F, T>,
 }
@@ -340,13 +341,14 @@ impl<F: FromUniformBytes<64> + Serialize, const T: usize, const RATE: usize> Spe
     /// calculates optimized constants and sparse matrices
     pub fn new(r_f: usize, r_p: usize) -> Self {
         let (unoptimized_constants, mds) = Grain::generate(r_f, r_p);
-        let temp = unoptimized_constants.clone();
         let constants = Self::calculate_optimized_constants(r_f, r_p, unoptimized_constants, &mds);
         let (sparse_matrices, pre_sparse_mds) = Self::calculate_sparse_matrices(r_p, &mds);
 
         Self {
             r_f,
-            unoptimized_constants: temp,
+            r_p,
+            t: T,
+            rate: RATE,
             constants,
             mds_matrices: MDSMatrices {
                 mds,

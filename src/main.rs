@@ -1,3 +1,4 @@
+use std::fs::File;
 use poseidon::Poseidon;
 
 use halo2curves::bn256::Fr;
@@ -14,8 +15,11 @@ fn main() {
     // and constants according to the specification
     let mut hasher = Poseidon::<Fr, 2, 1>::new(number_of_full_rounds, number_of_half_rounds);
 
-    let json = serde_json::to_string(&hasher.clone().spec).unwrap();
+    let json = serde_json::to_string_pretty(&hasher.clone().spec).unwrap();
     println!("Serialized JSON: {}", json);
+    let mut file = File::create("config.json").expect("Unable to create file");
+    use std::io::Write;
+    file.write_all(json.as_bytes()).expect("Unable to write data");
     // In sake of the example we generate some dummy scalar inputs
     let inputs =  (0..number_of_inputs_0)
         .map(|_| Fr::one())

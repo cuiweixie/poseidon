@@ -1,0 +1,66 @@
+{
+  "unoptimized_constants": [
+    [
+      "0x2b745c46e648356309f6c3b54100db1f91f92a33518c0d170d5e7c85f9ef58f2",
+      "0x03bb5db670bfd0d54d57b4915f19ce50a031b542b0759d850ccb79caa90f4cb5"
+    ],
+    [
+      "0x1ecc0da2d60a1bb6bf317f39b47d1fd8a5d8729fb332400316e54f93100fe853",
+      "0x02e58510c454d3b23f2643b6e658ecba78cc30afacb681350e1a6a3f3afb6d54"
+    ],
+    [
+      "0x2f859cd6316e2feeb7baf0576337fa16765a64af8fb6f98a04946a8162005671",
+      "0x041b8d89ffb8b3ded9848f532e3b929342716b11832c44c70186fe8a89073e2a"
+    ]
+  ],
+  "r_f": 2,
+  "mds_matrices": {
+    "mds": [
+      [
+        "0x1aebf64e761cca1d1c029d185320bf957f26900e304d6e0912298ccc5a3c0c53",
+        "0x06e815625cb76e1c132bd3a09e46e028733184a54c6a195ca1ed885b74a717ad"
+      ],
+      [
+        "0x12686c3179a6ee20a166c4509ab083154da9278a95715a016055807b36b8ce7b",
+        "0x046b366f41037b0a2e6fc7e09812270a581e95439213556bc4ba7ec88f139b53"
+      ]
+    ],
+    "pre_sparse_mds": [
+      [
+        "0x1aebf64e761cca1d1c029d185320bf957f26900e304d6e0912298ccc5a3c0c53",
+        "0x06e815625cb76e1c132bd3a09e46e028733184a54c6a195ca1ed885b74a717ad"
+      ],
+      [
+        "0x0b140685cbe3ed398b4551b54324c1e92bcdd9822b2816c7a34fd383718cfd80",
+        "0x0c6e7da73c44849071e9f7809279b15edf346a3905853c23b1ec30a30ae58b8c"
+      ]
+    ],
+    "sparse_matrices": [
+      {
+        "row": [
+          "0x1aebf64e761cca1d1c029d185320bf957f26900e304d6e0912298ccc5a3c0c53",
+          "0x11a941c3619669364ed08328d42c6882684225d6b54faa1e117fdf2e40a8fb95"
+        ],
+        "col_hat": [
+          "0x12686c3179a6ee20a166c4509ab083154da9278a95715a016055807b36b8ce7b"
+        ]
+      }
+    ]
+  },
+  "constants": {
+    "start": [
+      [
+        "0x2b745c46e648356309f6c3b54100db1f91f92a33518c0d170d5e7c85f9ef58f2",
+        "0x03bb5db670bfd0d54d57b4915f19ce50a031b542b0759d850ccb79caa90f4cb5"
+      ],
+      [
+        "0x21661f6878dcfb5f321457497346ce0b024c7abcbf089969dcdb41bafe1f7849",
+        "0x12ae929a7761815fcdd6640337c805b16ee000d416f522123051159a200d3753"
+      ]
+    ],
+    "partial": [
+      "0x238efc64b47d5ff13857f9173380057ba3f59533c4b628a94c4ffc6a39d68c1c"
+    ],
+    "end": []
+  }
+}

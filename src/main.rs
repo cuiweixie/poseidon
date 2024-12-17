@@ -4,15 +4,15 @@ use halo2curves::bn256::Fr;
 
 fn main() {
     // Define the parameters for the Poseidon hasher
-    let number_of_full_rounds = 8;
-    let number_of_half_rounds = 56;
-    let number_of_inputs_0 = 5;
+    let number_of_full_rounds = 2;
+    let number_of_half_rounds = 1;
+    let number_of_inputs_0 = 1;
     let number_of_inputs_1 = 3;
 
     // Initialize a mutable hasher with constant capacity parameters
     // and number of rounds arguments. This will also generate matrices
     // and constants according to the specification
-    let mut hasher = Poseidon::<Fr, 17, 16>::new(number_of_full_rounds, number_of_half_rounds);
+    let mut hasher = Poseidon::<Fr, 2, 1>::new(number_of_full_rounds, number_of_half_rounds);
 
     let json = serde_json::to_string(&hasher.clone().spec).unwrap();
     println!("Serialized JSON: {}", json);
@@ -22,7 +22,10 @@ fn main() {
         .collect::<Vec<Fr>>();
 
     // Feed inputs to the Absorption line
-    hasher.update(&inputs[..]);
+    let r = hasher.update_exact(&[Fr::one()]);
+    println!("r: {:?}", r);
+
+    println!("state[0]: {:?}", hasher.get_state());
 
     // Yield your challenge with squeeze function
     let challenge_alpha = hasher.squeeze();
